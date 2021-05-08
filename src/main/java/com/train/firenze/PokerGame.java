@@ -21,6 +21,10 @@ public class PokerGame {
         final var actionCompletedPlayer = players.poll();
         players.offer(actionCompletedPlayer);
         awaitingList.offer(actionCompletedPlayer);
+        nextRound();
+    }
+
+    private void nextRound() {
         if (awaitingList.size() == players.size()) {
             round = Round.values()[round.ordinal()+1];
         }
@@ -28,5 +32,11 @@ public class PokerGame {
 
     public Player activePlayer() {
         return players.peek();
+
+    }
+
+    public void fold() {
+        players.poll();
+        nextRound();
     }
 }

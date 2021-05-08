@@ -62,4 +62,25 @@ class PokerGameTest {
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         assertThat(pokerGame.pot).isEqualTo(4);
     }
+
+    @Test
+    void should_remove_player_when_they_choose_fold() {
+        final Player playerA = new Player("A");
+        final Player playerB = new Player("B");
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+
+        pokerGame.bet();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+
+        pokerGame.bet();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.pot).isEqualTo(4);
+
+        pokerGame.fold();
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        assertThat(pokerGame.pot).isEqualTo(4);
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+    }
 }
