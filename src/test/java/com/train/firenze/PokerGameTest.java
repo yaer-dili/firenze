@@ -2,6 +2,7 @@ package com.train.firenze;
 
 import static com.train.firenze.Round.FLOP;
 import static com.train.firenze.Round.PRE_FLOP;
+import static com.train.firenze.Round.TURN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
@@ -36,15 +37,19 @@ class PokerGameTest {
     void should_start_next_round_when_all_player_bet() {
         final Player playerA = new Player("A");
         final Player playerB = new Player("B");
-        final PokerGame pokerGame = new PokerGame(playerA, playerB);
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
 
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         pokerGame.bet();
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
 
-        pokerGame.bet();
+        pokerGame.call();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(6);
         assertThat(pokerGame.round).isEqualTo(FLOP);
-        assertThat(pokerGame.pot).isEqualTo(4);
     }
 
     @Test
@@ -58,7 +63,7 @@ class PokerGameTest {
         pokerGame.bet();
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
 
-        pokerGame.bet();
+        pokerGame.call();
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         assertThat(pokerGame.pot).isEqualTo(4);
     }
@@ -74,7 +79,7 @@ class PokerGameTest {
         pokerGame.bet();
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
 
-        pokerGame.bet();
+        pokerGame.call();
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         assertThat(pokerGame.pot).isEqualTo(4);
 
@@ -85,35 +90,25 @@ class PokerGameTest {
     }
 
     @Test
-    void name() {
+    void should_go_into_next_round_if_all_user_check() {
         final Player playerA = new Player("A");
         final Player playerB = new Player("B");
         final Player playerC = new Player("C");
         final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
 
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         pokerGame.bet();
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-        assertThat(pokerGame.pot).isEqualTo(2);
-
-        assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
-        pokerGame.check();
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-        assertThat(pokerGame.pot).isEqualTo(2);
-
-        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
-        pokerGame.check();
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-        assertThat(pokerGame.pot).isEqualTo(2);
-
-        assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
-        pokerGame.bet();
-        assertThat(pokerGame.pot).isEqualTo(4);
-        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-
-        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
-        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.call();
         assertThat(pokerGame.pot).isEqualTo(6);
+
         assertThat(pokerGame.round).isEqualTo(FLOP);
+        pokerGame.check();
+        pokerGame.check();
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+
+        pokerGame.check();
+        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.round).isEqualTo(TURN);
     }
 }
