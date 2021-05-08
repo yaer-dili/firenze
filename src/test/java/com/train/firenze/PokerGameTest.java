@@ -83,4 +83,37 @@ class PokerGameTest {
         assertThat(pokerGame.pot).isEqualTo(4);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
     }
+
+    @Test
+    void name() {
+        final Player playerA = new Player("A");
+        final Player playerB = new Player("B");
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+
+        pokerGame.bet();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.pot).isEqualTo(2);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
+        pokerGame.check();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.pot).isEqualTo(2);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
+        pokerGame.check();
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.pot).isEqualTo(2);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
+        pokerGame.bet();
+        assertThat(pokerGame.pot).isEqualTo(4);
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
+        pokerGame.bet();
+        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+    }
 }
