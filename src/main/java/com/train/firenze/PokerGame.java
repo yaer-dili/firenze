@@ -23,26 +23,8 @@ public class PokerGame {
         round = Round.PRE_FLOP;
     }
 
-    public void bet() {
-        new Bet().execute(this);
-
-        nextRound();
-    }
-
-    public void raise() {
-        new Raise().execute(this);
-
-        nextRound();
-    }
-
-    public void check() {
-        new Check().execute(this);
-
-        nextRound();
-    }
-
-    public void fold() {
-        new Fold().execute(this);
+    public void play(final Action action) {
+        action.execute(this);
 
         nextRound();
     }
