@@ -2,30 +2,23 @@ package com.train.firenze;
 
 import com.train.firenze.actions.Action;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 public class PokerGame {
-    private final Map<Player, Integer> actionCompletedPlayerWithWager;
+    private final Round round;
     private final Pot pot;
-    private Round currentRound;
     private Queue<Player> awaitingList;
 
     public PokerGame(final Player... players) {
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.pot = new Pot();
-        this.currentRound = Round.PRE_FLOP;
-        this.actionCompletedPlayerWithWager = new HashMap<>();
+        this.round = new Round();
     }
 
     public void play(final Action action) {
         action.execute(this);
-        nextRound();
+        this.awaitingList = round.next(this.awaitingList, this.pot.potMinWager);
     }
 
     public Player checkActivePlayer() {
@@ -36,27 +29,8 @@ public class PokerGame {
         return awaitingList;
     }
 
-    public void resetGameState() {
-        actionCompletedPlayerWithWager.clear();
-        this.awaitingList = this.awaitingList.stream()
-                .sorted(Comparator.comparing(Player::getPosition))
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    void nextRound() {
-        if (actionCompletedPlayerWithWager.size() >= retrieveAwaitingList().size()
-                && actionCompletedPlayerWithWager.values()
-                .stream()
-                .filter(Objects::nonNull)
-                .allMatch(wager -> wager == retrievePotDetails().potMinWager || wager == 0)) {
-
-            this.currentRound = Round.values()[currentRound.ordinal() + 1];
-            resetGameState();
-        }
-    }
-
-    public Round retrieveRoundDetails() {
-        return currentRound;
+    public RoundName retrieveCurrentRoundName() {
+        return round.currentRoundName;
     }
 
     public Pot retrievePotDetails() {
@@ -64,6 +38,6 @@ public class PokerGame {
     }
 
     public void updatePlayerWager(final Player activePlayer, final Integer wager) {
-        actionCompletedPlayerWithWager.put(activePlayer, wager);
+        round.actionCompletedPlayerWithWager.put(activePlayer, wager);
     }
 }
