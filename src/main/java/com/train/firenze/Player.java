@@ -4,9 +4,16 @@ import java.util.Objects;
 
 public class Player {
     private final String name;
+    private final int position;
 
     public Player(final String name) {
         this.name = name;
+        this.position = 0;
+    }
+
+    public Player(final String name, final int position) {
+        this.name = name;
+        this.position = position;
     }
 
     public String getName() {
@@ -35,5 +42,9 @@ public class Player {
         return "Player{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    public int getPosition() {
+        return position;
     }
 }

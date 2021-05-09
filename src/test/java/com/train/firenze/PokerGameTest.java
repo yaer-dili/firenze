@@ -167,4 +167,56 @@ class PokerGameTest {
         assertThat(pokerGame.pot).isEqualTo(20);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
+
+    @Test
+    void should_able_to_fold_in_any_round() {
+        final Player playerA = new Player("A");
+        final Player playerB = new Player("B");
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(6);
+
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        pokerGame.bet();
+        pokerGame.raise();
+        pokerGame.call();
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+        pokerGame.fold();
+        assertThat(pokerGame.awaitingList.size()).isEqualTo(2);
+        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.round).isEqualTo(TURN);
+    }
+
+    @Test
+    void should_A_start_first_when_go_into_next_round() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.raise();
+        assertThat(pokerGame.pot).isEqualTo(8);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+        pokerGame.call();
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(16);
+
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+        pokerGame.check();
+        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+    }
 }
