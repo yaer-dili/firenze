@@ -1,4 +1,6 @@
-package com.train.firenze;
+package com.train.firenze.actions;
+
+import com.train.firenze.PokerGame;
 
 public class Bet implements Action {
     @Override

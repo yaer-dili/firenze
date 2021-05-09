@@ -1,6 +1,8 @@
-package com.train.firenze;
+package com.train.firenze.actions;
 
-public class Check implements Action{
+import com.train.firenze.PokerGame;
+
+public class Check implements Action {
     @Override
     public void execute(final PokerGame pokerGame) {
         final var actionCompletedPlayer = pokerGame.retrieveAwaitingList().poll();
