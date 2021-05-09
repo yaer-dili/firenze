@@ -29,7 +29,7 @@ class PokerGameTest {
 
         assertThat(pokerGame.pot.chips).isEqualTo(2);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
-        assertThat(pokerGame.awaitingList).contains(playerA);
+        assertThat(pokerGame.retrieveAwaitingList()).contains(playerA);
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
     }
 
@@ -191,7 +191,7 @@ class PokerGameTest {
 
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Fold());
-        assertThat(pokerGame.awaitingList.size()).isEqualTo(2);
+        assertThat(pokerGame.retrieveAwaitingList().size()).isEqualTo(2);
         assertThat(pokerGame.pot.chips).isEqualTo(16);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
@@ -242,7 +242,7 @@ class PokerGameTest {
         pokerGame.play(new Check());
         pokerGame.play(new Check());
         pokerGame.play(new Check());
-        assertThat(pokerGame.awaitingList.size()).isEqualTo(3);
+        assertThat(pokerGame.retrieveAwaitingList().size()).isEqualTo(3);
         assertThat(pokerGame.pot.chips).isEqualTo(16);
 
         assertThat(pokerGame.round).isEqualTo(TURN);

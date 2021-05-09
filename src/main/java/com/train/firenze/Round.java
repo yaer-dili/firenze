@@ -1,9 +1,6 @@
 package com.train.firenze;
 
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public enum Round {
     PRE_FLOP, FLOP, TURN, RIVER;
@@ -12,16 +9,13 @@ public enum Round {
         if (isCurrentRoundFinished(pokerGame)) {
 
             pokerGame.round = values()[ordinal() + 1];
-            pokerGame.actionCompletedPlayerWithWager.clear();
-            pokerGame.awaitingList = pokerGame.awaitingList.stream()
-                    .sorted(Comparator.comparing(Player::getPosition))
-                    .collect(Collectors.toCollection(LinkedList::new));
+            pokerGame.resetGameState();
 
         }
     }
 
     private boolean isCurrentRoundFinished(final PokerGame pokerGame) {
-        return pokerGame.actionCompletedPlayerWithWager.size() >= pokerGame.awaitingList.size()
+        return pokerGame.actionCompletedPlayerWithWager.size() >= pokerGame.retrieveAwaitingList().size()
                 && pokerGame.actionCompletedPlayerWithWager
                 .values()
                 .stream()
