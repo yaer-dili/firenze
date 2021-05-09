@@ -21,27 +21,15 @@ public class PokerGame {
     public PokerGame(final Player... players) {
         this.players = new LinkedList<>(Arrays.asList(players));
         this.awaitingList = this.players;
+        this.potMinWager = MIN_WAGER_SIZE;
         round = Round.PRE_FLOP;
     }
 
-    public void bet() {
-        if (potMinWager == 0) {
-            pot += MIN_WAGER_SIZE;
-            potMinWager = MIN_WAGER_SIZE;
-        } else {
-            pot += potMinWager;
-        }
+    public void betOrCall() {
         final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, potMinWager);
-        awaitingList.offer(actionCompletedPlayer);
-        nextRound();
-    }
-
-    public void call() {
-        final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, potMinWager);
-        awaitingList.offer(actionCompletedPlayer);
         pot += potMinWager;
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, potMinWager);
+        awaitingList.offer(actionCompletedPlayer);
         nextRound();
     }
 
