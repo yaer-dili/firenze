@@ -1,14 +1,15 @@
 package com.train.firenze;
 
-import static com.train.firenze.PokerGame.MIN_WAGER_SIZE;
+import static com.train.firenze.Pot.MIN_WAGER_SIZE;
 
-public class Raise implements Action{
+public class Raise implements Action {
     @Override
     public void execute(final PokerGame pokerGame) {
         final var actionCompletedPlayer = pokerGame.awaitingList.poll();
-        pokerGame.potMinWager = 2 * MIN_WAGER_SIZE;
-        pokerGame.pot += pokerGame.potMinWager;
-        pokerGame.actionCompletedPlayerWithWager.put(actionCompletedPlayer, pokerGame.potMinWager);
+        final var pot = pokerGame.pot;
+        pot.potMinWager = 2 * MIN_WAGER_SIZE;
+        pot.chips = pot.chips + pot.potMinWager;
+        pokerGame.actionCompletedPlayerWithWager.put(actionCompletedPlayer, pot.potMinWager);
         pokerGame.awaitingList.offer(actionCompletedPlayer);
     }
 }

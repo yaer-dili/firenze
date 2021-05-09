@@ -27,7 +27,7 @@ class PokerGameTest {
 
         pokerGame.play(new Bet());
 
-        assertThat(pokerGame.pot).isEqualTo(2);
+        assertThat(pokerGame.pot.chips).isEqualTo(2);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
         assertThat(pokerGame.awaitingList).contains(playerA);
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
@@ -48,7 +48,7 @@ class PokerGameTest {
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
 
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
         assertThat(pokerGame.round).isEqualTo(FLOP);
     }
 
@@ -65,7 +65,7 @@ class PokerGameTest {
 
         pokerGame.play(new Bet());
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-        assertThat(pokerGame.pot).isEqualTo(4);
+        assertThat(pokerGame.pot.chips).isEqualTo(4);
     }
 
     @Test
@@ -81,11 +81,11 @@ class PokerGameTest {
 
         pokerGame.play(new Bet());
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
-        assertThat(pokerGame.pot).isEqualTo(4);
+        assertThat(pokerGame.pot.chips).isEqualTo(4);
 
         pokerGame.play(new Fold());
         assertThat(pokerGame.round).isEqualTo(FLOP);
-        assertThat(pokerGame.pot).isEqualTo(4);
+        assertThat(pokerGame.pot.chips).isEqualTo(4);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
     }
 
@@ -100,7 +100,7 @@ class PokerGameTest {
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         pokerGame.play(new Check());
@@ -108,7 +108,7 @@ class PokerGameTest {
         assertThat(pokerGame.round).isEqualTo(FLOP);
 
         pokerGame.play(new Check());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
 
@@ -123,17 +123,17 @@ class PokerGameTest {
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         pokerGame.play(new Check());
         pokerGame.play(new Bet());
         assertThat(pokerGame.round).isEqualTo(FLOP);
-        assertThat(pokerGame.pot).isEqualTo(8);
+        assertThat(pokerGame.pot.chips).isEqualTo(8);
 
         assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(10);
+        assertThat(pokerGame.pot.chips).isEqualTo(10);
 
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Bet());
@@ -151,23 +151,23 @@ class PokerGameTest {
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(8);
+        assertThat(pokerGame.pot.chips).isEqualTo(8);
 
         pokerGame.play(new Raise());
-        assertThat(pokerGame.pot).isEqualTo(12);
+        assertThat(pokerGame.pot.chips).isEqualTo(12);
 
         assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
         assertThat(pokerGame.round).isEqualTo(FLOP);
 
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(20);
+        assertThat(pokerGame.pot.chips).isEqualTo(20);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
 
@@ -182,7 +182,7 @@ class PokerGameTest {
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(6);
+        assertThat(pokerGame.pot.chips).isEqualTo(6);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         pokerGame.play(new Bet());
@@ -192,7 +192,7 @@ class PokerGameTest {
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Fold());
         assertThat(pokerGame.awaitingList.size()).isEqualTo(2);
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
 
@@ -207,19 +207,19 @@ class PokerGameTest {
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Raise());
-        assertThat(pokerGame.pot).isEqualTo(8);
+        assertThat(pokerGame.pot.chips).isEqualTo(8);
 
         assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Bet());
         assertThat(pokerGame.activePlayer()).isEqualTo(playerB);
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
         pokerGame.play(new Check());
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
         assertThat(pokerGame.round).isEqualTo(FLOP);
     }
 
@@ -236,20 +236,20 @@ class PokerGameTest {
         pokerGame.play(new Raise());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
 
         assertThat(pokerGame.round).isEqualTo(FLOP);
         pokerGame.play(new Check());
         pokerGame.play(new Check());
         pokerGame.play(new Check());
         assertThat(pokerGame.awaitingList.size()).isEqualTo(3);
-        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.pot.chips).isEqualTo(16);
 
         assertThat(pokerGame.round).isEqualTo(TURN);
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
         pokerGame.play(new Bet());
-        assertThat(pokerGame.pot).isEqualTo(28);
+        assertThat(pokerGame.pot.chips).isEqualTo(28);
 
         assertThat(pokerGame.round).isEqualTo(Round.RIVER);
     }

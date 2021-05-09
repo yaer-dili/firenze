@@ -10,22 +10,21 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class PokerGame {
-    public static final int MIN_WAGER_SIZE = 2;
     public final Map<Player, Integer> actionCompletedPlayerWithWager = new HashMap<>();
+
+    public final Pot pot;
+
     public Queue<Player> awaitingList;
-    public int pot;
     public Round round;
-    public int potMinWager;
 
     public PokerGame(final Player... players) {
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
-        this.potMinWager = MIN_WAGER_SIZE;
+        this.pot = new Pot();
         round = Round.PRE_FLOP;
     }
 
     public void play(final Action action) {
         action.execute(this);
-
         nextRound();
     }
 
@@ -50,6 +49,6 @@ public class PokerGame {
                 .values()
                 .stream()
                 .filter(Objects::nonNull)
-                .allMatch(wager -> wager == potMinWager || wager == 0);
+                .allMatch(wager -> wager == pot.potMinWager || wager == 0);
     }
 }
