@@ -9,9 +9,9 @@ public class Raise implements Action {
     public void execute(final PokerGame pokerGame) {
         final var actionCompletedPlayer = pokerGame.retrieveAwaitingList().poll();
         final var pot = pokerGame.retrievePotDetails();
-        pot.potMinWager = 2 * MIN_WAGER_SIZE;
-        pot.chips = pot.chips + pot.potMinWager;
-        pokerGame.updatePlayerWager(actionCompletedPlayer, pot.potMinWager);
+        pot.updatePot(2 * MIN_WAGER_SIZE);
+        pokerGame.updatePlayerWager(actionCompletedPlayer, pot.getPotMinWager());
         pokerGame.retrieveAwaitingList().offer(actionCompletedPlayer);
     }
+
 }

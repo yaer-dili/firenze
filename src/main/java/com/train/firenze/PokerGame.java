@@ -18,7 +18,7 @@ public class PokerGame {
 
     public void play(final Action action) {
         action.execute(this);
-        this.awaitingList = round.next(this.awaitingList, this.pot.potMinWager);
+        this.awaitingList = round.next(this.awaitingList, this.pot.getPotMinWager());
     }
 
     public Player checkActivePlayer() {

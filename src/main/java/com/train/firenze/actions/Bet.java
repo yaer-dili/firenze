@@ -7,8 +7,8 @@ public class Bet implements Action {
     public void execute(PokerGame pokerGame) {
         final var actionCompletedPlayer = pokerGame.retrieveAwaitingList().poll();
         final var pot = pokerGame.retrievePotDetails();
-        pot.chips = pot.chips + pot.potMinWager;
-        pokerGame.updatePlayerWager(actionCompletedPlayer, pot.potMinWager);
+        pot.updatePot(pot.getPotMinWager());
+        pokerGame.updatePlayerWager(actionCompletedPlayer, pot.getPotMinWager());
         pokerGame.retrieveAwaitingList().offer(actionCompletedPlayer);
     }
 }
