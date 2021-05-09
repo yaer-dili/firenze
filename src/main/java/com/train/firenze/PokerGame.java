@@ -1,54 +1,30 @@
 package com.train.firenze;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 public class PokerGame {
     public final Map<Player, Integer> actionCompletedPlayerWithWager = new HashMap<>();
-
     public final Pot pot;
-
     public Queue<Player> awaitingList;
     public Round round;
 
     public PokerGame(final Player... players) {
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.pot = new Pot();
-        round = Round.PRE_FLOP;
+        this.round = Round.PRE_FLOP;
     }
 
     public void play(final Action action) {
         action.execute(this);
-        nextRound();
-    }
-
-    private void nextRound() {
-        if (isCurrentRoundFinished()) {
-            round = Round.values()[round.ordinal() + 1];
-            actionCompletedPlayerWithWager.clear();
-            awaitingList = awaitingList.stream()
-                    .sorted(Comparator.comparing(Player::getPosition))
-                    .collect(Collectors.toCollection(LinkedList::new));
-
-        }
+        round.nextRound(this);
     }
 
     public Player activePlayer() {
         return awaitingList.peek();
     }
 
-    private boolean isCurrentRoundFinished() {
-        return actionCompletedPlayerWithWager.size() >= awaitingList.size()
-                && actionCompletedPlayerWithWager
-                .values()
-                .stream()
-                .filter(Objects::nonNull)
-                .allMatch(wager -> wager == pot.potMinWager || wager == 0);
-    }
 }
