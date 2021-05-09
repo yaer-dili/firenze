@@ -219,4 +219,35 @@ class PokerGameTest {
         assertThat(pokerGame.pot).isEqualTo(16);
         assertThat(pokerGame.round).isEqualTo(FLOP);
     }
+
+    @Test
+    void should_start_forth_round_when_three_round_finished() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.raise();
+        pokerGame.call();
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(16);
+
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        pokerGame.check();
+        pokerGame.check();
+        pokerGame.check();
+        assertThat(pokerGame.awaitingList.size()).isEqualTo(3);
+        assertThat(pokerGame.pot).isEqualTo(16);
+
+        assertThat(pokerGame.round).isEqualTo(TURN);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(28);
+
+        assertThat(pokerGame.round).isEqualTo(Round.RIVER);
+    }
 }

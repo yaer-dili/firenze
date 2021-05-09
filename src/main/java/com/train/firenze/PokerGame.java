@@ -16,7 +16,8 @@ public class PokerGame {
     public int pot;
     public Round round;
     private Map<Player, Integer> actionCompletePlyerWithWager = new HashMap<>();
-    private int roundWager;
+    public int roundWager;
+    private int potMinWager;
 
     public PokerGame(final Player... players) {
         this.players = new LinkedList<>(Arrays.asList(players));
@@ -25,24 +26,38 @@ public class PokerGame {
     }
 
     public void bet() {
-        pot += MIN_WAGER_SIZE;
-        roundWager = MIN_WAGER_SIZE;
+        if (potMinWager == 0) {
+            pot += MIN_WAGER_SIZE;
+            potMinWager = MIN_WAGER_SIZE;
+            roundWager = MIN_WAGER_SIZE;
+        } else {
+            pot += potMinWager;
+            roundWager = potMinWager;
+        }
         final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, MIN_WAGER_SIZE);
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, roundWager);
         awaitingList.offer(actionCompletedPlayer);
         nextRound();
     }
 
     private void nextRound() {
-        if (actionCompletePlyerWithWager.size() >= awaitingList.size()
-                && actionCompletePlyerWithWager.values().stream().filter(Objects::nonNull).allMatch(wager -> wager == roundWager)) {
+        if (isCurrentRoundFinished()) {
             round = Round.values()[round.ordinal() + 1];
-
             actionCompletePlyerWithWager.clear();
             awaitingList = awaitingList.stream()
                     .sorted(Comparator.comparing(Player::getPosition))
                     .collect(Collectors.toCollection(LinkedList::new));
+
         }
+    }
+
+    private boolean isCurrentRoundFinished() {
+        return actionCompletePlyerWithWager.size() >= awaitingList.size()
+                && actionCompletePlyerWithWager
+                .values()
+                .stream()
+                .filter(Objects::nonNull)
+                .allMatch(wager -> wager == roundWager);
     }
 
     public Player activePlayer() {
@@ -58,7 +73,8 @@ public class PokerGame {
         final var actionCompletedPlayer = awaitingList.poll();
 
         awaitingList.offer(actionCompletedPlayer);
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, MIN_WAGER_SIZE);
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, 0);
+        roundWager = 0;
 
         nextRound();
     }
@@ -75,6 +91,7 @@ public class PokerGame {
         final var actionCompletedPlayer = awaitingList.poll();
         final int raiseWager = 2 * MIN_WAGER_SIZE;
         roundWager = raiseWager;
+        potMinWager = raiseWager;
         actionCompletePlyerWithWager.put(actionCompletedPlayer, raiseWager);
         awaitingList.offer(actionCompletedPlayer);
         pot += raiseWager;
