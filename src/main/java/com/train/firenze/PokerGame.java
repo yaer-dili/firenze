@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class PokerGame {
     public static final int MIN_WAGER_SIZE = 2;
-    private final Queue<Player> players;
     public Queue<Player> awaitingList;
     public int pot;
     public Round round;
@@ -19,8 +18,7 @@ public class PokerGame {
     private int potMinWager;
 
     public PokerGame(final Player... players) {
-        this.players = new LinkedList<>(Arrays.asList(players));
-        this.awaitingList = this.players;
+        this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.potMinWager = MIN_WAGER_SIZE;
         round = Round.PRE_FLOP;
     }
