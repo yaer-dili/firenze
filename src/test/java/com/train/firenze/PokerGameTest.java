@@ -134,6 +134,9 @@ class PokerGameTest {
         assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
         pokerGame.call();
         assertThat(pokerGame.pot).isEqualTo(10);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+        pokerGame.call();
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
 
