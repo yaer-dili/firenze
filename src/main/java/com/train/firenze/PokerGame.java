@@ -16,7 +16,6 @@ public class PokerGame {
     public int pot;
     public Round round;
     private Map<Player, Integer> actionCompletePlyerWithWager = new HashMap<>();
-    public int roundWager;
     private int potMinWager;
 
     public PokerGame(final Player... players) {
@@ -29,14 +28,44 @@ public class PokerGame {
         if (potMinWager == 0) {
             pot += MIN_WAGER_SIZE;
             potMinWager = MIN_WAGER_SIZE;
-            roundWager = MIN_WAGER_SIZE;
         } else {
             pot += potMinWager;
-            roundWager = potMinWager;
         }
         final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, roundWager);
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, potMinWager);
         awaitingList.offer(actionCompletedPlayer);
+        nextRound();
+    }
+
+    public void call() {
+        final var actionCompletedPlayer = awaitingList.poll();
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, potMinWager);
+        awaitingList.offer(actionCompletedPlayer);
+        pot += potMinWager;
+        nextRound();
+    }
+
+    public void fold() {
+        actionCompletePlyerWithWager.put(awaitingList.poll(), null);
+        nextRound();
+    }
+
+    public void check() {
+        final var actionCompletedPlayer = awaitingList.poll();
+
+        awaitingList.offer(actionCompletedPlayer);
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, 0);
+
+        nextRound();
+    }
+
+    public void raise() {
+        final var actionCompletedPlayer = awaitingList.poll();
+        final int raiseWager = 2 * MIN_WAGER_SIZE;
+        potMinWager = raiseWager;
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, raiseWager);
+        awaitingList.offer(actionCompletedPlayer);
+        pot += raiseWager;
         nextRound();
     }
 
@@ -51,50 +80,16 @@ public class PokerGame {
         }
     }
 
+    public Player activePlayer() {
+        return awaitingList.peek();
+    }
+
     private boolean isCurrentRoundFinished() {
         return actionCompletePlyerWithWager.size() >= awaitingList.size()
                 && actionCompletePlyerWithWager
                 .values()
                 .stream()
                 .filter(Objects::nonNull)
-                .allMatch(wager -> wager == roundWager);
-    }
-
-    public Player activePlayer() {
-        return awaitingList.peek();
-    }
-
-    public void fold() {
-        actionCompletePlyerWithWager.put(awaitingList.poll(), null);
-        nextRound();
-    }
-
-    public void check() {
-        final var actionCompletedPlayer = awaitingList.poll();
-
-        awaitingList.offer(actionCompletedPlayer);
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, 0);
-        roundWager = 0;
-
-        nextRound();
-    }
-
-    public void call() {
-        final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, roundWager);
-        awaitingList.offer(actionCompletedPlayer);
-        pot += roundWager;
-        nextRound();
-    }
-
-    public void raise() {
-        final var actionCompletedPlayer = awaitingList.poll();
-        final int raiseWager = 2 * MIN_WAGER_SIZE;
-        roundWager = raiseWager;
-        potMinWager = raiseWager;
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, raiseWager);
-        awaitingList.offer(actionCompletedPlayer);
-        pot += raiseWager;
-        nextRound();
+                .allMatch(wager -> wager == potMinWager || wager == 0);
     }
 }
