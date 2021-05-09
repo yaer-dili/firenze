@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class PokerGame {
     public static final int MIN_WAGER_SIZE = 2;
-    private final Map<Player, Integer> actionCompletedPlayerWithWager = new HashMap<>();
+    public final Map<Player, Integer> actionCompletedPlayerWithWager = new HashMap<>();
     public Queue<Player> awaitingList;
     public int pot;
     public Round round;
-    private int potMinWager;
+    public int potMinWager;
 
     public PokerGame(final Player... players) {
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
@@ -23,40 +23,26 @@ public class PokerGame {
         round = Round.PRE_FLOP;
     }
 
-    public void betOrCall() {
-        final var actionCompletedPlayer = awaitingList.poll();
-
-        pot += potMinWager;
-        actionCompletedPlayerWithWager.put(actionCompletedPlayer, potMinWager);
-        awaitingList.offer(actionCompletedPlayer);
+    public void bet() {
+        new Bet().execute(this);
 
         nextRound();
     }
 
     public void raise() {
-        final var actionCompletedPlayer = awaitingList.poll();
-
-        potMinWager = 2 * MIN_WAGER_SIZE;
-        pot += potMinWager;
-        actionCompletedPlayerWithWager.put(actionCompletedPlayer, potMinWager);
-        awaitingList.offer(actionCompletedPlayer);
+        new Raise().execute(this);
 
         nextRound();
     }
 
     public void check() {
-        final var actionCompletedPlayer = awaitingList.poll();
-
-        actionCompletedPlayerWithWager.put(actionCompletedPlayer, 0);
-        awaitingList.offer(actionCompletedPlayer);
+        new Check().execute(this);
 
         nextRound();
     }
 
     public void fold() {
-        final var actionCompletedPlayer = awaitingList.poll();
-
-        actionCompletedPlayerWithWager.put(actionCompletedPlayer, null);
+        new Fold().execute(this);
 
         nextRound();
     }
