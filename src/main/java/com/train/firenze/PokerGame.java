@@ -10,8 +10,8 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class PokerGame {
-    public final Map<Player, Integer> actionCompletedPlayerWithWager = new HashMap<>();
-    public final Pot pot;
+    private final Map<Player, Integer> actionCompletedPlayerWithWager;
+    private final Pot pot;
     private Round currentRound;
     private Queue<Player> awaitingList;
 
@@ -19,6 +19,7 @@ public class PokerGame {
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.pot = new Pot();
         this.currentRound = Round.PRE_FLOP;
+        this.actionCompletedPlayerWithWager = new HashMap<>();
     }
 
     public void play(final Action action) {
@@ -26,7 +27,7 @@ public class PokerGame {
         nextRound();
     }
 
-    public Player activePlayer() {
+    public Player checkActivePlayer() {
         return retrieveAwaitingList().peek();
     }
 
@@ -35,7 +36,7 @@ public class PokerGame {
     }
 
     public void resetGameState() {
-        this.actionCompletedPlayerWithWager.clear();
+        actionCompletedPlayerWithWager.clear();
         this.awaitingList = this.awaitingList.stream()
                 .sorted(Comparator.comparing(Player::getPosition))
                 .collect(Collectors.toCollection(LinkedList::new));
@@ -43,11 +44,10 @@ public class PokerGame {
 
     void nextRound() {
         if (actionCompletedPlayerWithWager.size() >= retrieveAwaitingList().size()
-                && actionCompletedPlayerWithWager
-                .values()
+                && actionCompletedPlayerWithWager.values()
                 .stream()
                 .filter(Objects::nonNull)
-                .allMatch(wager -> wager == pot.potMinWager || wager == 0)) {
+                .allMatch(wager -> wager == retrievePotDetails().potMinWager || wager == 0)) {
 
             this.currentRound = Round.values()[currentRound.ordinal() + 1];
             resetGameState();
@@ -56,5 +56,13 @@ public class PokerGame {
 
     public Round retrieveRoundDetails() {
         return currentRound;
+    }
+
+    public Pot retrievePotDetails() {
+        return pot;
+    }
+
+    public void updatePlayerWager(final Player activePlayer, final Integer wager) {
+        actionCompletedPlayerWithWager.put(activePlayer, wager);
     }
 }
