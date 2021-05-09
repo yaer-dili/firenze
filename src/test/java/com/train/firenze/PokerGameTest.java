@@ -111,4 +111,60 @@ class PokerGameTest {
         assertThat(pokerGame.pot).isEqualTo(6);
         assertThat(pokerGame.round).isEqualTo(TURN);
     }
+
+    @Test
+    void should_go_into_next_round_when_only_one_player_check() {
+        final Player playerA = new Player("A");
+        final Player playerB = new Player("B");
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(6);
+
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        pokerGame.check();
+        pokerGame.bet();
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        assertThat(pokerGame.pot).isEqualTo(8);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(10);
+        assertThat(pokerGame.round).isEqualTo(TURN);
+    }
+
+    @Test
+    void should_all_player_needs_to_match_the_raise_amount_when_someone_raise() {
+        final Player playerA = new Player("A");
+        final Player playerB = new Player("B");
+        final Player playerC = new Player("C");
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.round).isEqualTo(PRE_FLOP);
+        pokerGame.bet();
+        pokerGame.call();
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(6);
+
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+        pokerGame.bet();
+        assertThat(pokerGame.pot).isEqualTo(8);
+
+        pokerGame.raise();
+        assertThat(pokerGame.pot).isEqualTo(12);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerC);
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(16);
+        assertThat(pokerGame.round).isEqualTo(FLOP);
+
+        assertThat(pokerGame.activePlayer()).isEqualTo(playerA);
+        pokerGame.call();
+        assertThat(pokerGame.pot).isEqualTo(20);
+        assertThat(pokerGame.round).isEqualTo(TURN);
+    }
 }

@@ -59,9 +59,19 @@ public class PokerGame {
 
     public void call() {
         final var actionCompletedPlayer = awaitingList.poll();
-        actionCompletePlyerWithWager.put(actionCompletedPlayer, MIN_WAGER_SIZE);
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, roundWager);
         awaitingList.offer(actionCompletedPlayer);
-        pot += MIN_WAGER_SIZE;
+        pot += roundWager;
+        nextRound();
+    }
+
+    public void raise() {
+        final var actionCompletedPlayer = awaitingList.poll();
+        final int raiseWager = 2 * MIN_WAGER_SIZE;
+        roundWager = raiseWager;
+        actionCompletePlyerWithWager.put(actionCompletedPlayer, raiseWager);
+        awaitingList.offer(actionCompletedPlayer);
+        pot += raiseWager;
         nextRound();
     }
 }
