@@ -260,6 +260,33 @@ class PokerGameTest {
     }
 
     @Test
+    void should_pot_chips_increase_base_on_raised_player_when_multi_player_raise_in_one_round() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveAwaitingList()).containsExactly(playerA, playerB, playerC);
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        assertThat(pokerGame.checkActivePlayer()).isEqualTo(playerA);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Raise());
+        pokerGame.play(new Raise());
+        pokerGame.play(new Raise());
+
+        assertThat(pokerGame.checkActivePlayer()).isEqualTo(playerC);
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrievePotDetails().getChips()).isEqualTo(30);
+
+        assertThat(pokerGame.checkActivePlayer()).isEqualTo(playerA);
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrievePotDetails().getChips()).isEqualTo(38);
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+    }
+
+    @Test
     void should_start_the_game_with_at_least_two_people() {
         final Player playerA = new Player("A", 1);
 

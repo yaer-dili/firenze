@@ -11,7 +11,7 @@ public class Raise implements Action {
         final var pot = pokerGame.retrievePotDetails();
         final var round = pokerGame.retrieveRound();
 
-        pot.updatePot(2 * MIN_WAGER_SIZE);
+        pot.updatePot(pot.getPotMinWager() + MIN_WAGER_SIZE);
         round.updatePlayerWager(activePlayer, pot.getPotMinWager());
 
         pokerGame.updateWaitingList(activePlayer);
