@@ -11,6 +11,8 @@ public class PokerGame {
     private Queue<Player> awaitingList;
 
     public PokerGame(final Player... players) {
+        checkEligibility(players);
+
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.pot = new Pot();
         this.round = new Round();
@@ -18,7 +20,13 @@ public class PokerGame {
 
     public void play(final Action action) {
         action.execute(this);
-        this.awaitingList = round.next(this.awaitingList, this.pot.getPotMinWager());
+        this.awaitingList = this.round.next(this.awaitingList, this.pot.getPotMinWager());
+    }
+
+    private void checkEligibility(final Player[] players) {
+        if (players.length < 2) {
+            throw new IllegalArgumentException("at lease require two player");
+        }
     }
 
     public Player checkActivePlayer() {
@@ -37,7 +45,15 @@ public class PokerGame {
         return pot;
     }
 
-    public void updatePlayerWager(final Player activePlayer, final Integer wager) {
-        round.actionCompletedPlayerWithWager.put(activePlayer, wager);
+    public Round retrieveRound() {
+        return round;
+    }
+
+    public Player retrieveActivePlayer() {
+        return awaitingList.poll();
+    }
+
+    public void updateWaitingList(final Player actionCompletedPlayer) {
+        awaitingList.offer(actionCompletedPlayer);
     }
 }

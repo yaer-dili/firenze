@@ -34,4 +34,8 @@ public class Round {
 
         return (LinkedList<Player>) awaitingList;
     }
+
+    public void updatePlayerWager(final Player activePlayer, final Integer wager) {
+        actionCompletedPlayerWithWager.put(activePlayer, wager);
+    }
 }

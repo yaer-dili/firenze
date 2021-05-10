@@ -4,6 +4,7 @@ import static com.train.firenze.RoundName.FLOP;
 import static com.train.firenze.RoundName.PRE_FLOP;
 import static com.train.firenze.RoundName.TURN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.train.firenze.actions.Bet;
 import com.train.firenze.actions.Check;
@@ -256,5 +257,13 @@ class PokerGameTest {
         assertThat(pokerGame.retrievePotDetails().getChips()).isEqualTo(28);
 
         assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(RoundName.RIVER);
+    }
+
+    @Test
+    void should_start_the_game_with_at_least_two_people() {
+        final Player playerA = new Player("A", 1);
+
+        assertThatThrownBy(() -> new PokerGame(playerA))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
