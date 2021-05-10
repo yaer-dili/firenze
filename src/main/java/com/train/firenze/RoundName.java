@@ -1,5 +1,5 @@
 package com.train.firenze;
 
 public enum RoundName {
-    PRE_FLOP, FLOP, TURN, RIVER
+    PRE_FLOP, FLOP, TURN, RIVER, SHOWDOWN
 }

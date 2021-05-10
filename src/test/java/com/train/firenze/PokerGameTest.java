@@ -2,6 +2,8 @@ package com.train.firenze;
 
 import static com.train.firenze.RoundName.FLOP;
 import static com.train.firenze.RoundName.PRE_FLOP;
+import static com.train.firenze.RoundName.RIVER;
+import static com.train.firenze.RoundName.SHOWDOWN;
 import static com.train.firenze.RoundName.TURN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,6 +12,8 @@ import com.train.firenze.actions.Bet;
 import com.train.firenze.actions.Check;
 import com.train.firenze.actions.Fold;
 import com.train.firenze.actions.Raise;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class PokerGameTest {
@@ -292,5 +296,170 @@ class PokerGameTest {
 
         assertThatThrownBy(() -> new PokerGame(playerA))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void should_playerB_win_the_game_by_compare_player_cards_when_all_4_round_finished_and_there_is_still_3_player_on_the_game() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(TURN);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(RIVER);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(SHOWDOWN);
+
+        final var winner = pokerGame.showdown().get(0);
+
+        assertThat(winner).isEqualTo(playerB);
+    }
+
+    @Test
+    void should_playerB_win_all_chips_in_pot_when_playerB_is_the_winner() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(TURN);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(RIVER);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(SHOWDOWN);
+
+        final var winner = pokerGame.showdown().get(0);
+        assertThat(winner).isEqualTo(playerB);
+        assertThat(winner.getChips()).isEqualTo(pokerGame.retrievePotDetails().getChips());
+    }
+
+    @Test
+    void should_all_player_have_two_card_when_game_started() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+
+        new PokerGame(playerA, playerB, playerC);
+
+        assertThat(playerA.getCards().size()).isEqualTo(2);
+        assertThat(playerB.getCards().size()).isEqualTo(2);
+        assertThat(playerC.getCards().size()).isEqualTo(2);
+    }
+
+    @Test
+    void should_not_have_public_cards_when_pre_flop_round() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+
+        final var pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveGamePublicCards()).isEmpty();
+    }
+
+    @Test
+    void should_open_new_public_card_from_second_round() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveGamePublicCards()).isEmpty();
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+        assertThat(pokerGame.retrieveGamePublicCards().size()).isEqualTo(1);
+    }
+
+    @Test
+    void should_have_3_public_cards_when_start_showdown() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(TURN);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(RIVER);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(SHOWDOWN);
+
+        assertThat(pokerGame.retrieveGamePublicCards().size()).isEqualTo(3);
+    }
+
+    @Test
+    void should_split_the_pot_chips_evenly_when_there_is_two_winner_at_the_end() {
+        final Player playerA = new Player("A", 1);
+        final Player playerB = new Player("B", 2);
+        final Player playerC = new Player("C", 3);
+        final PokerGame pokerGame = new PokerGame(playerA, playerB, playerC);
+
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(PRE_FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(FLOP);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(TURN);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(RIVER);
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        pokerGame.play(new Bet());
+        assertThat(pokerGame.retrieveCurrentRoundName()).isEqualTo(SHOWDOWN);
+
+        assertThat(pokerGame.retrieveGamePublicCards().size()).isEqualTo(3);
+        playerA.setCards(Arrays.asList(Card.CLUB_1, Card.CLUB_2));
+        playerC.setCards(Arrays.asList(Card.CLUB_1, Card.CLUB_2));
+        final List<Player> winners = pokerGame.showdown();
+        assertThat(winners.size()).isEqualTo(2);
+        assertThat(winners).containsExactly(playerA, playerC);
+        assertThat(winners.get(0).getChips()).isEqualTo(12);
+        assertThat(winners.get(1).getChips()).isEqualTo(12);
+
     }
 }
