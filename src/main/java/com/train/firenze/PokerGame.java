@@ -12,28 +12,37 @@ public class PokerGame {
     private final Round round;
     private final Pot pot;
     private final List<Card> publicCards;
+    private final Queue<Card> allCards;
     private Queue<Player> awaitingList;
-    private Queue<Card> gameCards;
+
+    public Queue<Card> retrieveGameCards() {
+        return allCards;
+    }
 
     public PokerGame(final Player... players) {
+        this.allCards = new LinkedList<>(Arrays.asList(Card.values()));
         checkEligibility(players);
+        setupDefaultCardsForPlayer(players);
 
         this.awaitingList = new LinkedList<>(Arrays.asList(players));
         this.pot = new Pot();
         this.round = new Round();
-        this.gameCards = new LinkedList<>(Arrays.asList(Card.values()));
-        Arrays.stream(players).forEach(player -> player.setCards(Arrays.asList(gameCards.poll(), gameCards.poll())));
         this.publicCards = new LinkedList<>();
+    }
+
+    private void setupDefaultCardsForPlayer(final Player[] players) {
+        Arrays.stream(players)
+                .forEach(player -> player.setCards(Arrays.asList(allCards.poll(), allCards.poll())));
     }
 
     public void play(final Action action) {
         action.execute(this);
-        this.awaitingList = this.round.next(this.awaitingList, this.pot.getPotMinWager(), this.gameCards, this.publicCards);
+        this.awaitingList = round.next(this);
     }
 
     private void checkEligibility(final Player[] players) {
         if (players.length < 2) {
-            throw new IllegalArgumentException("at lease require two player");
+            throw new IllegalArgumentException("at least require two player");
         }
     }
 

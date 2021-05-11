@@ -18,23 +18,21 @@ public class Round {
         this.actionCompletedPlayerWithWager = new HashMap<>();
     }
 
-    LinkedList<Player> next(Queue<Player> awaitingList,
-                            final int potMinWager,
-                            final Queue<Card> gameCards,
-                            final List<Card> publicCards) {
+    LinkedList<Player> next(PokerGame pokerGame) {
+        final var awaitingList = pokerGame.retrieveAwaitingList();
 
         if (actionCompletedPlayerWithWager.size() >= awaitingList.size()
                 && actionCompletedPlayerWithWager.values()
                 .stream()
                 .filter(Objects::nonNull)
-                .allMatch(wager -> wager == potMinWager || wager == 0)) {
+                .allMatch(wager -> wager == pokerGame.retrievePotDetails().getPotMinWager() || wager == 0)) {
 
             final var newRoundName = RoundName.values()[currentRoundName.ordinal() + 1];
             currentRoundName = newRoundName;
             actionCompletedPlayerWithWager.clear();
 
             if (newRoundName != RoundName.SHOWDOWN) {
-                publicCards.add(gameCards.poll());
+                pokerGame.retrieveGamePublicCards().add(pokerGame.retrieveGameCards().poll());
             }
 
             return awaitingList.stream()
